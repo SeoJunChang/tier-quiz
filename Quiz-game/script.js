@@ -1556,7 +1556,7 @@ function shareResult() {
 💬 결과: ${rankMsg}
 ━━━━━━━━━━━━━━
 니 티어는 어디니? 도전해봐! 👇
-(여기에_Netlify_주소_입력)
+https://tier-quiz-c74ccaj79-johanchangs-projects.vercel.app/
 `;
 
 	navigator.clipboard.writeText(shareText.trim()).then(() => {
