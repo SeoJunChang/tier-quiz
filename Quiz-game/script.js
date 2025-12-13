@@ -1551,7 +1551,7 @@ function shareResult() {
 	const shareData = {
 		title: '🧠 퀴즈 마스터 결과',
 		text: `[${categoryName}] 제 점수는 ${score}점입니다! \n결과: ${rankMsg}\n\n니 티어는 어디니? 도전해봐! 👇`,
-		url: 'https://brain-quiz-master.netlify.app' // 여기에 실제 배포된 URL을 넣으세요
+		url: 'https://tier-quiz-git-main-johanchangs-projects.vercel.app' // 여기에 실제 배포된 URL을 넣으세요
 	};
 
 	// 2. 브라우저가 '공유하기 기능'을 지원하는지 확인 (주로 모바일)
