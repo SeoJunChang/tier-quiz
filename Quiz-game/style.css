@@ -459,3 +459,17 @@ body {
 .modal-overlay.active {
 	display: flex;
 }
+
+/* 틀렸을 때 화면 흔들기 효과 */
+@keyframes shake-animation {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-10px) rotate(-5deg); }
+  50% { transform: translateX(10px) rotate(5deg); }
+  75% { transform: translateX(-10px) rotate(-5deg); }
+  100% { transform: translateX(0); }
+}
+
+.shake {
+  animation: shake-animation 0.4s ease-in-out;
+  border: 2px solid #ff6b6b !important; /* 테두리도 빨갛게! */
+}

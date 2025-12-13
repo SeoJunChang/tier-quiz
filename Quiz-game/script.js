@@ -1423,7 +1423,7 @@ function useHint() {
 }
 
 function passQuestion() {
-	if(!confirm("패스하시겠습니까? (오답 처리됨)")) return;
+	// 묻지 않고 바로 패스 처리 (오답 처리됨)
 	showFeedback(false, false, true);
 }
 
@@ -1452,7 +1452,8 @@ function showFeedback(isCorrect, isTimeout = false, isPass = false) {
 	clearInterval(timer);
 	const feedback = document.getElementById('feedback-msg');
 	const mainAnswer = currentQuestions[currentQuestionIndex].answer[0];
-	
+	const gameContainer = document.getElementById('quiz-screen'); // 흔들 대상(게임화면)
+
 	// 중복 제출 방지
 	document.querySelector('.btn-submit').disabled = true;
 
@@ -1462,10 +1463,7 @@ function showFeedback(isCorrect, isTimeout = false, isPass = false) {
 	} else if (isTimeout) {
 		feedback.innerText = `⏰ 시간 초과! 정답: ${mainAnswer}`;
 		feedback.style.color = '#ff6b6b';
-		
-		// ★ [추가] 시간 초과도 틀린 거니까 진동 (200ms)
-		if (navigator.vibrate) navigator.vibrate(200); 
-
+		triggerShake(gameContainer); // ★ 시간 초과도 흔들기!
 	} else if (isCorrect) {
 		feedback.innerText = "🎉 정답입니다!";
 		feedback.style.color = '#1dd1a1';
@@ -1473,12 +1471,7 @@ function showFeedback(isCorrect, isTimeout = false, isPass = false) {
 		// 오답인 경우
 		feedback.innerText = `❌ 땡! 정답: ${mainAnswer}`;
 		feedback.style.color = '#ff6b6b';
-
-		// ★ [추가] 오답 시 진동 울리기 (200ms)
-		// 주의: 아이폰(iOS) 브라우저는 이 기능을 지원하지 않습니다. (안드로이드만 작동)
-		if (navigator.vibrate) {
-			navigator.vibrate(300); // 징- 하고 0.3초 울림
-		}
+		triggerShake(gameContainer); // ★ 오답일 때 흔들기!
 	}
 
 	setTimeout(() => {
@@ -1490,6 +1483,21 @@ function showFeedback(isCorrect, isTimeout = false, isPass = false) {
 		}
 	}, 2000);
 }
+
+// ★ 흔들기 효과 실행 함수 (따로 추가해주세요)
+function triggerShake(element) {
+	// 1. 진동 (안드로이드용)
+	if (navigator.vibrate) navigator.vibrate(300);
+	
+	// 2. 화면 흔들기 (아이폰 + 안드로이드 공통 시각 효과)
+	element.classList.add('shake');
+	
+	// 0.4초 뒤에 흔들기 클래스 제거 (다음에도 또 흔들려야 하니까)
+	setTimeout(() => {
+		element.classList.remove('shake');
+	}, 400);
+}
+
 function endGame() {
 	document.getElementById('quiz-screen').classList.remove('active');
 	document.getElementById('end-screen').classList.add('active');
