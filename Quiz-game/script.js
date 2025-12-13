@@ -1542,30 +1542,33 @@ function endGame() {
 	}
 }
 
-// ★ 결과 공유 기능
+// ★ 결과 공유 기능 (업그레이드 버전)
 function shareResult() {
 	const categoryName = document.getElementById('category-badge').innerText;
-	// 결과 멘트(칭호) 가져오기
 	const rankMsg = document.getElementById('score-text').innerText;
-	const myUrl = "https://tier-quiz-c74ccaj79-johanchangs-projects.vercel.app/";
 	
-	const shareText = `
+	// 1. 공유하고 싶은 데이터 정의
+	const shareData = {
+		title: '🧠 퀴즈 마스터 결과',
+		text: `[${categoryName}] 제 점수는 ${score}점입니다! \n결과: ${rankMsg}\n\n니 티어는 어디니? 도전해봐! 👇`,
+		url: 'https://brain-quiz-master.netlify.app' // 여기에 실제 배포된 URL을 넣으세요
+	};
 
-[🧠 퀴즈 마스터 결과]
-━━━━━━━━━━━━━━
-📌 분야: ${categoryName}
-🏆 점수: ${score}점 / ${currentQuestions.length}문제
-💬 결과: ${rankMsg}
-━━━━━━━━━━━━━━
-니 티어는 어디니? 도전해봐! 👇
-${myUrl}`;
-`;
-
-	navigator.clipboard.writeText(shareText.trim()).then(() => {
-		alert("결과가 복사되었습니다! 카톡에 붙여넣으세요.");
-	}).catch(() => {
-		alert("복사 실패");
-	});
+	// 2. 브라우저가 '공유하기 기능'을 지원하는지 확인 (주로 모바일)
+	if (navigator.share) {
+		navigator.share(shareData)
+			.then(() => console.log('공유 성공'))
+			.catch((error) => console.log('공유 실패', error));
+	} 
+	// 3. 지원하지 않는 경우 (주로 PC) -> 기존처럼 클립보드 복사
+	else {
+		const shareText = `${shareData.title}\n${shareData.text}\n${shareData.url}`;
+		navigator.clipboard.writeText(shareText).then(() => {
+			alert("결과가 복사되었습니다! 카톡에 붙여넣으세요.");
+		}).catch(() => {
+			alert("복사 실패");
+		});
+	}
 }
 
 // 엔터키 입력 시 정답 확인 (한글 입력 오류 방지 적용)
