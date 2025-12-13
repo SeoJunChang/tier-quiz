@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>퀴즈 마스터</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+	<div class="app-container">
+<div id="start-screen" class="screen active">
+		<div class="logo-area">
+			<h1>🧠 퀴즈 마스터</h1>
+			<p>당신의 상식 레벨을 테스트하세요!</p>
+		</div>
+	
+		<div class="difficulty-section">
+			<p class="section-title">난이도 선택</p>
+			<div class="difficulty-btns">
+				<button onclick="setDifficulty('easy')" class="btn-level active" id="btn-easy">🐣 쉬움</button>
+				<button onclick="setDifficulty('normal')" class="btn-level" id="btn-normal">🐥 보통</button>
+				<button onclick="setDifficulty('hard')" class="btn-level" id="btn-hard">🦅 어려움</button>
+			</div>
+		</div>
+		<div class="category-grid">
+			<button onclick="startGame('history')">📜 역사</button>
+			<button onclick="startGame('science')">🧬 과학</button>
+			<button onclick="startGame('movie')">🎬 영화</button>
+			<button onclick="startGame('geo')">🌍 지리</button>
+			<button onclick="startGame('proverb')">🦉 속담</button>
+			<button onclick="startGame('people')">👤 인물</button>
+			<button onclick="startGame('art')">🎨 예술</button>
+			<button onclick="startGame('nonsense')">🤣 넌센스</button>
+			<button onclick="startGame('random')" class="btn-random">🎖️ 내 상식 티어 측정 (25문제) 📊 종합 상식 능력평가</button>
+		</div>
+	</div>
+
+		<div id="quiz-screen" class="screen">
+			
+			<div class="top-bar">
+				<button onclick="goHome()" id="btn-home" class="btn-mini">🏠</button> 
+				
+				<span id="category-badge">분야</span>
+				<span id="question-count">1 / 10</span>
+			</div>
+		
+			<div class="timer-container">
+				<div id="time-left"></div>
+			</div>
+			<div class="card">
+				<h2 id="question-text">문제</h2>
+				<div id="hint-text" class="hint-box"></div>
+			</div>
+			<div class="input-section">
+				<input type="text" 
+				id="answer-input" 
+				name="quiz_game_answer_field_random"
+				placeholder="정답 입력"
+				autocomplete="off" 
+				autocorrect="off" 
+				autocapitalize="off" 
+				spellcheck="false"
+				enterkeyhint="done">
+			</div>
+		
+			<div class="action-buttons-container">
+				<div class="sub-buttons">
+					<button onclick="useHint()" class="btn-option btn-hint">💡 힌트</button>
+					<button onclick="passQuestion()" class="btn-option btn-pass">🏳️ 패스</button>
+				</div>
+				<button onclick="checkAnswer()" class="btn-submit">제 출 하 기</button>
+			</div>
+			
+			<p id="feedback-msg"></p>
+		</div>
+
+		<div id="end-screen" class="screen">
+			<div class="result-card">
+				<div class="score-circle">
+					<span id="final-score">0</span>
+					<span class="total-label">/ 10</span>
+				</div>
+				<h2 id="result-title">게임 종료!</h2>
+				<p id="score-text">결과 메시지</p>
+			</div>
+			
+			<div class="action-buttons">
+				<button onclick="shareResult()" class="btn-share" style="background: #2ecc71; color: white;">📤 결과 공유하기</button>
+				<button onclick="location.reload()" class="btn-restart">다시 도전하기</button>
+			</div>
+		</div>
+	</div>
+
+	<script src="script.js"></script>
+	<div id="confirm-modal" class="modal-overlay">
+			<div class="modal-content">
+				<h3>잠깐! 🛑</h3>
+				<p>퀴즈를 중단하고<br>홈으로 돌아가시겠습니까?</p>
+				<p class="sub-text">(진행 중인 점수는 저장되지 않습니다)</p>
+				
+				<div class="modal-buttons">
+					<button onclick="closeModal()" class="btn-cancel">계속 풀기</button>
+					<button onclick="confirmExit()" class="btn-confirm">나가기</button>
+				</div>
+			</div>
+		</div>
+	
+		<script src="script.js"></script>
+	</body>
+	</html>
