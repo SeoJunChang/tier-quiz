@@ -1253,16 +1253,19 @@ function startGame(category) {
 	} else {
 		totalQuestions = 10; // 나머지는 가볍게 10문제
 	}
-
-	// 필터링: 카테고리 & 난이도
+	
+	// ★★★ [여기 수정함] 필터링 로직 ★★★
 	if (category === 'random') {
-		// 랜덤일 때는 난이도 상관없이 모든 문제를 가져오는 게 더 '왕중왕전' 답습니다.
-		// 하지만 선택된 난이도만 풀고 싶다면 아래 코드를 유지하세요.
-		filteredQuestions = quizData.filter(q => (q.level || 'normal') === currentDifficulty);
+		// [수정] 넌센스는 제외하고 가져오기 (&& q.category !== 'nonsense' 추가)
+		filteredQuestions = quizData.filter(q => 
+			(q.level || 'normal') === currentDifficulty && q.category !== 'nonsense'
+		);
 		
-		// (만약 난이도 상관없이 전체 문제에서 뽑고 싶다면 위 줄을 지우고 아래 줄 주석을 푸세요)
-		// filteredQuestions = [...quizData]; 
+		// (참고) 만약 난이도 상관없이 '전체 문제'에서 넌센스만 빼고 싶다면 아래 코드를 쓰세요.
+		// filteredQuestions = quizData.filter(q => q.category !== 'nonsense');
+	
 	} else {
+		// 일반 모드 (기존 동일)
 		filteredQuestions = quizData.filter(q => 
 			q.category === category && (q.level || 'normal') === currentDifficulty
 		);
@@ -1542,35 +1545,64 @@ function endGame() {
 	}
 }
 
-// ★ 결과 공유 기능 (업그레이드 버전)
+// ★ 결과 공유 기능 (텍스트+URL 합치기 버전)
 function shareResult() {
 	const categoryName = document.getElementById('category-badge').innerText;
-	const rankMsg = document.getElementById('score-text').innerText;
 	
-	// 1. 공유하고 싶은 데이터 정의
+	// 1. 티어 텍스트 계산 (지난번에 드린 코드가 없다면 여기서 다시 계산)
+	// (만약 shareResult 함수 안에 티어 계산 로직이 없다면 아래 코드를 그대로 쓰세요)
+	const total = currentQuestions.length;
+	const ratio = score / total;
+	let tierResult = "";
+
+	if (categoryName.includes('티어') || categoryName.includes('랜덤')) {
+		if (ratio >= 0.84) tierResult = "👑 챌린저 (상위 0.1%)";
+		else if (ratio >= 0.64) tierResult = "💎 다이아 (상위 1%)";
+		else if (ratio >= 0.44) tierResult = "🥇 골드 (평균 이상)";
+		else if (ratio >= 0.24) tierResult = "🥈 실버 (평균)";
+		else tierResult = "🗿 돌멩이 (공부 시급)";
+	} else {
+		if (ratio === 1) tierResult = "💯 만점 (천재인증)";
+		else if (ratio >= 0.8) tierResult = "👍 고수 인정!";
+		else tierResult = "💪 다시 도전해보세요!";
+	}
+
+	// 2. ★ 핵심 변경사항 ★
+	// URL을 따로 두지 말고, text 변수 안에 문자열로 합쳐버립니다.
+	const myUrl = 'https://tier-quiz-git-main-johanchangs-projects.vercel.app';
+	
+	const fullMessage = `[🧠 퀴즈 마스터 결과]
+📌 분야: ${categoryName}
+🏆 점수: ${score}점
+🎖️ 등급: ${tierResult}
+
+니 티어는 어디니? 도전해봐! 👇
+${myUrl}`;
+
+	// 3. 공유 데이터 설정
 	const shareData = {
 		title: '🧠 퀴즈 마스터 결과',
-		text: `[${categoryName}] 제 점수는 ${score}점입니다! \n결과: ${rankMsg}\n\n니 티어는 어디니? 도전해봐! 👇`,
-		url: 'https://tier-quiz-git-main-johanchangs-projects.vercel.app' // 여기에 실제 배포된 URL을 넣으세요
+		text: fullMessage, // 여기에 URL까지 포함된 전체 텍스트를 넣습니다.
+		// url: myUrl  <-- ❌ 이 줄을 지우거나 주석 처리하세요! (이게 있으면 텍스트가 씹힙니다)
 	};
 
-	// 2. 브라우저가 '공유하기 기능'을 지원하는지 확인 (주로 모바일)
+	// 4. 공유하기 실행
 	if (navigator.share) {
 		navigator.share(shareData)
 			.then(() => console.log('공유 성공'))
-			.catch((error) => console.log('공유 실패', error));
-	} 
-	// 3. 지원하지 않는 경우 (주로 PC) -> 기존처럼 클립보드 복사
-	else {
-		const shareText = `${shareData.title}\n${shareData.text}\n${shareData.url}`;
-		navigator.clipboard.writeText(shareText).then(() => {
-			alert("결과가 복사되었습니다! 카톡에 붙여넣으세요.");
+			.catch((error) => {
+				// 사용자가 취소했거나 에러가 나면 그냥 복사 기능으로 넘김
+				console.log('공유 실패/취소', error);
+			});
+	} else {
+		// PC 등 지원 안 하는 경우 클립보드 복사
+		navigator.clipboard.writeText(fullMessage).then(() => {
+			alert("결과가 복사되었습니다! 카톡 채팅방에 붙여넣으세요.");
 		}).catch(() => {
 			alert("복사 실패");
 		});
 	}
 }
-
 // 엔터키 입력 시 정답 확인 (한글 입력 오류 방지 적용)
 document.getElementById('answer-input').addEventListener("keydown", function(event) {
 	if (event.key === "Enter") {
