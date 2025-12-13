@@ -1547,8 +1547,10 @@ function shareResult() {
 	const categoryName = document.getElementById('category-badge').innerText;
 	// 결과 멘트(칭호) 가져오기
 	const rankMsg = document.getElementById('score-text').innerText;
+	const myUrl = "https://tier-quiz-c74ccaj79-johanchangs-projects.vercel.app/";
 	
 	const shareText = `
+
 [🧠 퀴즈 마스터 결과]
 ━━━━━━━━━━━━━━
 📌 분야: ${categoryName}
@@ -1556,7 +1558,7 @@ function shareResult() {
 💬 결과: ${rankMsg}
 ━━━━━━━━━━━━━━
 니 티어는 어디니? 도전해봐! 👇
-https://tier-quiz-c74ccaj79-johanchangs-projects.vercel.app/
+${myUrl}`;
 `;
 
 	navigator.clipboard.writeText(shareText.trim()).then(() => {
